@@ -1,1 +1,4 @@
-print("파이썬 되는거냐")
+import streamlit as st
+import pansdas as pd
+
+import statsapi
