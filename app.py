@@ -1,5 +1,5 @@
 import streamlit as st
-import pansdas as pd
+import pandas as pd
 import statsapi
 
 st.write(st.__version__)
