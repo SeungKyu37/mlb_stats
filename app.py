@@ -20,7 +20,7 @@ choose = option_menu(None, ["Home", "Scores", "Stats"],
 )
 
 if choose == "Home":
-    pass
+    st.title('홈페이지')
 
 elif choose == "Scores":
     run_scores()
