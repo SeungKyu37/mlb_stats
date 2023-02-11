@@ -3,10 +3,64 @@ import pandas as pd
 import statsapi
 from datetime import datetime
 
+def hanguel(team):
+    if team == "Atlanta Braves":
+        name = '애틀랜타'
+    if team == 'Miami Marlins':
+        name = '마이애미'
+    if team == 'New York Mets':
+        name = '뉴욕 메츠'
+    if team == "Philadelphia Phillies":
+        name = '필라델피아'
+    if team == 'Washington Nationals':
+        name = '워싱턴'
+    if team == 'Chicago Cubs':
+        name = '시카고 컵스'
+    if team == "Cincinnati Reds":
+        name = '신시내티'
+    if team == "Milwaukee Brewers":
+        name = '밀워키'
+    if team == "Pittsburgh Pirates":
+        name = '피츠버그'
+    if team == "St. Louis Cardinals":
+        name = '세인트루이스'
+    if team == "Arizona Diamondbacks":
+        name = '애리조나'
+    if team == "Colorado Rockies":
+        name = '콜로라도'
+    if team == "Los Angeles Dodgers":
+        name = 'LA다저스'
+    if team == "San Diego Padres":
+        name = '샌디에이고'
+    if team == "San Francisco Giants":
+        name = '샌프란시스코'
+    if team == "Baltimore Orioles":
+        name = '볼티모어'
+    if team == "Boston Red Sox":
+        name = '보스턴'
+    if team == "New York Yankees":
+        name = '뉴욕 양키스'
+    if team == "Tampa Bay Rays":
+        name = '템파베이'
+    if team == "Cincinnati Reds":
+        name = '신시내티'
+    if team == "Cincinnati Reds":
+        name = '신시내티'
+    if team == "Cincinnati Reds":
+        name = '신시내티'
+    if team == "Cincinnati Reds":
+        name = '신시내티'
+    if team == "Cincinnati Reds":
+        name = '신시내티'
+    if team == "Cincinnati Reds":
+        name = '신시내티'
+    if team == "Cincinnati Reds":
+        name = '신시내티'
+    
+
 def run_scores():
     # today = datetime.today().strftime("%m/%d/%Y")
 
-    sched = statsapi.schedule(start_date='10/02/2022',team=143)
     date = st.sidebar.date_input('날짜 선택')
     date = date.strftime("%m/%d/%Y")
     st.sidebar.write("팀 선택")
@@ -41,8 +95,8 @@ def run_scores():
     elif team == '시카고 컵스':
         team_id = 112
     elif team == '신시내티 레즈':
-        team_id = 1113
-    elif team == '워키 브루어스':
+        team_id = 113
+    elif team == '밀워키 브루어스':
         team_id = 158
     elif team == '피츠버그 파이리츠':
         team_id = 134
@@ -89,3 +143,24 @@ def run_scores():
     elif team == '텍사스 레인저스':
         team_id = 140
 
+    scores = statsapi.schedule(start_date=date,team=team_id)
+    st.write(scores)
+
+    game_id = scores[0]['game_id']
+
+    # 라인스코어
+    linescore = statsapi.linescore(game_id)
+    line = linescore.split("\n")
+    line1 = line[0].split()
+    line2 = line[1].split()
+    line3 = line[2].split()
+    df_score = pd.DataFrame(columns=line1)
+    df_score.loc[0] = line2
+    df_score.loc[1] = line3
+    df_score = df_score.set_index('Final')
+
+    
+    away = scores[0]['away_name']
+    home = scores[0]['home_name']
+    st.title(away +"           "+ home)
+    st.write(df_score)
