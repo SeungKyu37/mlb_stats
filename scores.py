@@ -4,11 +4,10 @@ import numpy as np
 import statsapi
 from datetime import datetime
 import matplotlib.pyplot as plt
-import platform
-from matplotlib import font_manager, rc
-plt.rcParams['axes.unicode_minus'] = False
-if platform.system() == 'Linux':
-    rc('font', family='NanumGothic')
+# from matplotlib import font_manager, rc
+# font_path = "./font/MALGUN.TTF"
+# font = font_manager.FontProperties(fname=font_path).get_name()
+# rc('font', family=font)
 
 def hanguel(team):
     if team == "Atlanta Braves":
