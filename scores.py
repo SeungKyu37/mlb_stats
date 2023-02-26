@@ -4,6 +4,8 @@ import numpy as np
 import statsapi
 from datetime import datetime
 import matplotlib.pyplot as plt
+import matplotlib.font_manager as fm
+fm._rebuild
 # from matplotlib import font_manager, rc
 # font_path = "./font/MALGUN.TTF"
 # font = font_manager.FontProperties(fname=font_path).get_name()
