@@ -5,7 +5,7 @@ import statsapi
 from datetime import datetime
 import matplotlib.pyplot as plt
 from matplotlib import font_manager, rc
-font_path = "C:/Windows/Fonts/malgun.ttf"
+font_path = "./font/MALGUN.TTF"
 font = font_manager.FontProperties(fname=font_path).get_name()
 rc('font', family=font)
 
