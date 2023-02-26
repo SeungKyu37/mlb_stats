@@ -5,7 +5,11 @@ import statsapi
 from datetime import datetime
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
-fm._rebuild
+f = [f.name for f in fm.fontManager.ttflist]
+print(f)
+
+# 확인 이후
+plt.rc('font', family='Malgun Gothic')
 # from matplotlib import font_manager, rc
 # font_path = "./font/MALGUN.TTF"
 # font = font_manager.FontProperties(fname=font_path).get_name()
