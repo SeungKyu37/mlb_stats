@@ -1,7 +1,13 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 import statsapi
 from datetime import datetime
+import matplotlib.pyplot as plt
+from matplotlib import font_manager, rc
+font_path = "C:/Windows/Fonts/malgun.ttf"
+font = font_manager.FontProperties(fname=font_path).get_name()
+rc('font', family=font)
 
 def hanguel(team):
     if team == "Atlanta Braves":
@@ -155,116 +161,165 @@ def run_scores():
     scores = statsapi.schedule(start_date=date,team=team_id)
     # st.write(scores)
 
-    game_id = scores[0]['game_id']
-    status = scores[0]['status']
-    # 라인스코어
-    linescore = statsapi.linescore(game_id)
-    # st.write(linescore)
-    line = linescore.split("\n")
-    line1 = line[0].split()
-    line2 = line[1].split()
-    line3 = line[2].split()
-    def insert(line):
-        if line[0] == 'Red':
-            del line[1]
-            del line[0]
-            line.insert(0, 'RedSox')
-        elif line[0] == 'White':
-            del line[1]
-            del line[0]
-            line.insert(0, 'WhiteSox')
-        elif line[0] == 'Blue':
-            del line[1]
-            del line[0]
-            line.insert(0, 'BlueJays')
-        return line
+    try:
+        game_id = scores[0]['game_id']
 
-    line2 = insert(line2)
-    line3 = insert(line3)
+        # 라인스코어
+        linescore = statsapi.linescore(game_id)
+        # st.write(linescore)
+        line = linescore.split("\n")
+        line1 = line[0].split()
+        line2 = line[1].split()
+        line3 = line[2].split()
+        def insert(line):
+            if line[0] == 'Red':
+                del line[1]
+                del line[0]
+                line.insert(0, 'RedSox')
+            elif line[0] == 'White':
+                del line[1]
+                del line[0]
+                line.insert(0, 'WhiteSox')
+            elif line[0] == 'Blue':
+                del line[1]
+                del line[0]
+                line.insert(0, 'BlueJays')
+            return line
 
-    if line1[10] != 'R': 
-        l10 = line1[10]
-        li = ' '.join([l10[i:i+2] for i in range(0, len(l10), 2)])
-        l10 = li.split(' ')
-        del line1[10]
+        line2 = insert(line2)
+        line3 = insert(line3)
+
+        if line1[10] != 'R': 
+            l10 = line1[10]
+            li = ' '.join([l10[i:i+2] for i in range(0, len(l10), 2)])
+            l10 = li.split(' ')
+            del line1[10]
+
+            
+            for a in range(int(l10[0]), int(l10[0])+int(len(l10))):
+                line1.insert(a, l10[a-10])
+        
+
+        df_score = pd.DataFrame(columns=line1)
+        df_score.loc[0] = line2
+        df_score.loc[1] = line3
+        df_score = df_score.set_index('Final')
 
         
-        for a in range(int(l10[0]), int(l10[0])+int(len(l10))):
-            line1.insert(a, l10[a-10])
-    
+        away = scores[0]['away_name']
+        home = scores[0]['home_name']
+        away_h = hanguel(away)
+        home_h = hanguel(home)
+        away_score = str(scores[0]['away_score'])
+        home_score = str(scores[0]['home_score'])
+        st.title(away_h + away_score + " " + home_score + home_h)
+        st.write(df_score)
 
-    df_score = pd.DataFrame(columns=line1)
-    df_score.loc[0] = line2
-    df_score.loc[1] = line3
-    df_score = df_score.set_index('Final')
-
-    
-    away = scores[0]['away_name']
-    home = scores[0]['home_name']
-    away = hanguel(away)
-    home = hanguel(home)
-    away_score = str(scores[0]['away_score'])
-    home_score = str(scores[0]['home_score'])
-    st.title(away + away_score + " " + home_score + home)
-    st.write(df_score)
-
-    def batting_stats(home_away):
         boxscore = statsapi.boxscore_data(game_id)
+        # st.write(boxscore)
+        away_hits = boxscore['away']['teamStats']['batting']['hits']
+        away_hrs = boxscore['away']['teamStats']['batting']['homeRuns']
+        away_stolen = boxscore['away']['teamStats']['batting']['stolenBases']
+        away_so = boxscore['away']['teamStats']['batting']['strikeOuts']
+        away_lob = boxscore['away']['teamStats']['batting']['leftOnBase']
 
-        batter = boxscore[home_away]['batters']
-        batter_list = []
-        for i in range(len(batter)):
-            batter_list.append(batter[i])
+        home_hits = boxscore['home']['teamStats']['batting']['hits']
+        home_hrs = boxscore['home']['teamStats']['batting']['homeRuns']
+        home_stolen = boxscore['home']['teamStats']['batting']['stolenBases']
+        home_so = boxscore['home']['teamStats']['batting']['strikeOuts']
+        home_lob = boxscore['home']['teamStats']['batting']['leftOnBase']
 
-        batting_df = pd.DataFrame(columns=['타자명','타수', '득점', '안타', '타점', '홈런', '볼넷', '삼진', '타율'])
+        a = ['안타', '홈런', '도루', '삼진', '잔루']
+        b = np.array([away_hits, away_hrs, away_stolen, away_so, away_lob])
+        c = np.array([home_hits, home_hrs, home_stolen, home_so, home_lob])
+
+        y = np.arange(c.size)
         
-        for i in range(len(batter_list)):
-            try:
-                name = boxscore[home_away]['players']['ID'+str(batter_list[i])]['person']['fullName']
-                atBats = boxscore[home_away]['players']['ID'+str(batter_list[i])]['stats']['batting']['atBats']
-                runs = boxscore[home_away]['players']['ID'+str(batter_list[i])]['stats']['batting']['runs']
-                hits = boxscore[home_away]['players']['ID'+str(batter_list[i])]['stats']['batting']['hits']
-                rbi = boxscore[home_away]['players']['ID'+str(batter_list[i])]['stats']['batting']['rbi']
-                homeRuns = boxscore[home_away]['players']['ID'+str(batter_list[i])]['stats']['batting']['homeRuns']
-                baseOnBalls = boxscore[home_away]['players']['ID'+str(batter_list[i])]['stats']['batting']['baseOnBalls']
-                strikeOuts = boxscore[home_away]['players']['ID'+str(batter_list[i])]['stats']['batting']['strikeOuts']
-                avg = boxscore[home_away]['players']['ID'+str(batter_list[i])]['seasonStats']['batting']['avg']
-                batting_df.loc[i] = [name, atBats, runs, hits, rbi, homeRuns, baseOnBalls, strikeOuts, avg]
-            except:
-                pass    
-        batting_df = batting_df.set_index("타자명")
-        return batting_df
 
-    def pitching_stats(home_away):
-        boxscore = statsapi.boxscore_data(game_id)
-        pitcher = boxscore[home_away]['pitchers']
-        pitcher_list = []
-        for i in range(len(pitcher)):
-            pitcher_list.append(pitcher[i])
+        fig, axes = plt.subplots(ncols=2, sharey=True)
+        
+        axes[0].barh(y, b, align='center', color='navy', zorder=10)
+        axes[0].set(title=away_h)
+        axes[1].barh(y, c, align='center', color='navy', zorder=10)
+        axes[1].set(title=home_h)
 
-        pitching_df = pd.DataFrame(columns=['투수명', '이닝', '피안타', '자책', '볼넷', '삼진', '투구수', '평균자책'])
+        axes[0].invert_xaxis()
+        axes[0].invert_yaxis()
+        axes[0].set(yticks=y, yticklabels=a)
+        axes[0].yaxis.tick_right()
 
-        for i in range(len(pitcher_list)):
-            try:
-                name = boxscore[home_away]['players']['ID'+str(pitcher_list[i])]['person']['fullName']
-                inningsPitched = boxscore[home_away]['players']['ID'+str(pitcher_list[i])]['stats']['pitching']['inningsPitched']
-                hits = boxscore[home_away]['players']['ID'+str(pitcher_list[i])]['stats']['pitching']['hits']
-                earnedRuns = boxscore[home_away]['players']['ID'+str(pitcher_list[i])]['stats']['pitching']['earnedRuns']
-                baseOnBalls = boxscore[home_away]['players']['ID'+str(pitcher_list[i])]['stats']['pitching']['baseOnBalls']
-                strikeOuts = boxscore[home_away]['players']['ID'+str(pitcher_list[i])]['stats']['pitching']['strikeOuts']
-                numberOfPitches = boxscore[home_away]['players']['ID'+str(pitcher_list[i])]['stats']['pitching']['numberOfPitches']
-                era = boxscore[home_away]['players']['ID'+str(pitcher_list[i])]['seasonStats']['pitching']['era']
-                pitching_df.loc[i] = [name, inningsPitched, hits, earnedRuns, baseOnBalls, strikeOuts, numberOfPitches, era]
-            except:
-                pass
-        pitching_df = pitching_df.set_index("투수명")
-        return pitching_df
-    
-    tab1, tab2 = st.tabs([away, home])
-    with tab1:
-        st.write(batting_stats('away'))
-        st.write(pitching_stats('away'))
-    
-    with tab2:
-        st.write(batting_stats('home'))
-        st.write(pitching_stats('home'))
+        axes[0].spines['top'].set_visible(False)
+        axes[0].spines['right'].set_visible(False)
+        axes[0].spines['left'].set_visible(False)
+        axes[0].spines['bottom'].set_visible(False)
+        axes[1].spines['top'].set_visible(False)
+        axes[1].spines['right'].set_visible(False)
+        axes[1].spines['left'].set_visible(False)
+        axes[1].spines['bottom'].set_visible(False)
+        fig.set_figheight(2)
+        fig.tight_layout()
+        fig.subplots_adjust(wspace=0.165)
+        st.pyplot(fig)
+
+        def batting_stats(home_away):
+            boxscore = statsapi.boxscore_data(game_id)
+
+            batter = boxscore[home_away]['batters']
+            batter_list = []
+            for i in range(len(batter)):
+                batter_list.append(batter[i])
+
+            batting_df = pd.DataFrame(columns=['타자명','타수', '득점', '안타', '타점', '홈런', '볼넷', '삼진', '타율'])
+            
+            for i in range(len(batter_list)):
+                try:
+                    name = boxscore[home_away]['players']['ID'+str(batter_list[i])]['person']['fullName']
+                    atBats = boxscore[home_away]['players']['ID'+str(batter_list[i])]['stats']['batting']['atBats']
+                    runs = boxscore[home_away]['players']['ID'+str(batter_list[i])]['stats']['batting']['runs']
+                    hits = boxscore[home_away]['players']['ID'+str(batter_list[i])]['stats']['batting']['hits']
+                    rbi = boxscore[home_away]['players']['ID'+str(batter_list[i])]['stats']['batting']['rbi']
+                    homeRuns = boxscore[home_away]['players']['ID'+str(batter_list[i])]['stats']['batting']['homeRuns']
+                    baseOnBalls = boxscore[home_away]['players']['ID'+str(batter_list[i])]['stats']['batting']['baseOnBalls']
+                    strikeOuts = boxscore[home_away]['players']['ID'+str(batter_list[i])]['stats']['batting']['strikeOuts']
+                    avg = boxscore[home_away]['players']['ID'+str(batter_list[i])]['seasonStats']['batting']['avg']
+                    batting_df.loc[i] = [name, atBats, runs, hits, rbi, homeRuns, baseOnBalls, strikeOuts, avg]
+                except:
+                    pass    
+            batting_df = batting_df.set_index("타자명")
+            return batting_df
+
+        def pitching_stats(home_away):
+            boxscore = statsapi.boxscore_data(game_id)
+            pitcher = boxscore[home_away]['pitchers']
+            pitcher_list = []
+            for i in range(len(pitcher)):
+                pitcher_list.append(pitcher[i])
+
+            pitching_df = pd.DataFrame(columns=['투수명', '이닝', '피안타', '자책', '볼넷', '삼진', '투구수', '평균자책'])
+
+            for i in range(len(pitcher_list)):
+                try:
+                    name = boxscore[home_away]['players']['ID'+str(pitcher_list[i])]['person']['fullName']
+                    inningsPitched = boxscore[home_away]['players']['ID'+str(pitcher_list[i])]['stats']['pitching']['inningsPitched']
+                    hits = boxscore[home_away]['players']['ID'+str(pitcher_list[i])]['stats']['pitching']['hits']
+                    earnedRuns = boxscore[home_away]['players']['ID'+str(pitcher_list[i])]['stats']['pitching']['earnedRuns']
+                    baseOnBalls = boxscore[home_away]['players']['ID'+str(pitcher_list[i])]['stats']['pitching']['baseOnBalls']
+                    strikeOuts = boxscore[home_away]['players']['ID'+str(pitcher_list[i])]['stats']['pitching']['strikeOuts']
+                    numberOfPitches = boxscore[home_away]['players']['ID'+str(pitcher_list[i])]['stats']['pitching']['numberOfPitches']
+                    era = boxscore[home_away]['players']['ID'+str(pitcher_list[i])]['seasonStats']['pitching']['era']
+                    pitching_df.loc[i] = [name, inningsPitched, hits, earnedRuns, baseOnBalls, strikeOuts, numberOfPitches, era]
+                except:
+                    pass
+            pitching_df = pitching_df.set_index("투수명")
+            return pitching_df
+        
+        tab1, tab2 = st.tabs([away_h, home_h])
+        with tab1:
+            st.write(batting_stats('away'))
+            st.write(pitching_stats('away'))
+        
+        with tab2:
+            st.write(batting_stats('home'))
+            st.write(pitching_stats('home'))
+    except:
+        st.title('금일 경기가 없습니다.')
