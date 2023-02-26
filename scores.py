@@ -8,7 +8,7 @@ import matplotlib.font_manager as fm
 f = [f.name for f in fm.fontManager.ttflist]
 print(f)
 
-plt.rc('font', family='Noto Sans')
+plt.rc('font', family='NanumGothic')
 
 
 def hanguel(team):
