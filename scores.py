@@ -8,12 +8,8 @@ import matplotlib.font_manager as fm
 f = [f.name for f in fm.fontManager.ttflist]
 print(f)
 
-# 확인 이후
-plt.rc('font', family='Malgun Gothic')
-# from matplotlib import font_manager, rc
-# font_path = "./font/MALGUN.TTF"
-# font = font_manager.FontProperties(fname=font_path).get_name()
-# rc('font', family=font)
+plt.rc('font', family='Noto Sans')
+
 
 def hanguel(team):
     if team == "Atlanta Braves":
