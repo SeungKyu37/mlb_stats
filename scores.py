@@ -6,7 +6,7 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 f = [f.name for f in fm.fontManager.ttflist]
-print(f)
+# print(f)
 
 plt.rc('font', family='NanumGothic')
 
@@ -168,7 +168,6 @@ def run_scores():
 
         # 라인스코어
         linescore = statsapi.linescore(game_id)
-        # st.write(linescore)
         line = linescore.split("\n")
         line1 = line[0].split()
         line2 = line[1].split()
@@ -245,10 +244,14 @@ def run_scores():
         axes[1].barh(y, c, align='center', color='navy', zorder=10)
         axes[1].set(title=home_h)
 
-        axes[0].invert_xaxis()
+        
         axes[0].invert_yaxis()
         axes[0].set(yticks=y, yticklabels=a)
         axes[0].yaxis.tick_right()
+        axes[0].set_xlim([0,25])
+        axes[1].set_xlim([0,25])
+        axes[0].invert_xaxis()
+        
 
         axes[0].spines['top'].set_visible(False)
         axes[0].spines['right'].set_visible(False)
@@ -258,6 +261,8 @@ def run_scores():
         axes[1].spines['right'].set_visible(False)
         axes[1].spines['left'].set_visible(False)
         axes[1].spines['bottom'].set_visible(False)
+        # axes[0].xlim([0,20])
+        # axes[1].xlim([0,20])
         fig.set_figheight(2)
         fig.tight_layout()
         fig.subplots_adjust(wspace=0.165)
