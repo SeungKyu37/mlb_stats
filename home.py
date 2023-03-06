@@ -17,14 +17,15 @@ def today_score(index):
     home_score = scores[index]["home_score"]
     home_pitcher = scores[index]["home_probable_pitcher"]
     inning = scores[index]["current_inning"]
+    st.write()
 
 
 def run_home():
     
-    col1, col2, col3, col4, col5 = st.columns(5)
+    col1, col2, col3 = st.columns(3)
 
     with col1:
 
-    st.write(scores)
+        st.write(scores)
 
     
