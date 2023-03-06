@@ -4,12 +4,16 @@ import numpy as np
 import statsapi
 from datetime import datetime
 import matplotlib.pyplot as plt
-import matplotlib.font_manager as fm
-f = [f.name for f in fm.fontManager.ttflist]
-# print(f)
+# import matplotlib.font_manager as fm
+# f = [f.name for f in fm.fontManager.ttflist]
+# # print(f)
 
-plt.rc('font', family='NanumGothic')
+# plt.rc('font', family='NanumGothic')
 
+from matplotlib import font_manager, rc
+font_path = "font/MALGUN.TTF"
+font = font_manager.FontProperties(fname=font_path).get_name()
+rc('font', family=font)
 
 def hanguel(team):
     if team == "Atlanta Braves":
@@ -261,8 +265,6 @@ def run_scores():
         axes[1].spines['right'].set_visible(False)
         axes[1].spines['left'].set_visible(False)
         axes[1].spines['bottom'].set_visible(False)
-        # axes[0].xlim([0,20])
-        # axes[1].xlim([0,20])
         fig.set_figheight(2)
         fig.tight_layout()
         fig.subplots_adjust(wspace=0.165)

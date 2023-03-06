@@ -4,6 +4,7 @@ import statsapi
 from datetime import datetime
 from streamlit_option_menu import option_menu
 
+from home import run_home
 from scores import run_scores
 from stats import run_stats
 
@@ -20,7 +21,7 @@ choose = option_menu(None, ["Home", "Scores", "Stats"],
 )
 
 if choose == "Home":
-    st.title('홈페이지')
+    run_home()
 
 elif choose == "Scores":
     run_scores()
