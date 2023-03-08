@@ -4,16 +4,16 @@ import numpy as np
 import statsapi
 from datetime import datetime
 import matplotlib.pyplot as plt
-# import matplotlib.font_manager as fm
-# f = [f.name for f in fm.fontManager.ttflist]
-# # print(f)
+import matplotlib.font_manager as fm
+f = [f.name for f in fm.fontManager.ttflist]
+# print(f)
 
-# plt.rc('font', family='NanumGothic')
+plt.rc('font', family='NanumGothic')
 
-from matplotlib import font_manager, rc
-font_path = "font/MALGUN.TTF"
-font = font_manager.FontProperties(fname=font_path).get_name()
-rc('font', family=font)
+# from matplotlib import font_manager, rc
+# font_path = "font/MALGUN.TTF"
+# font = font_manager.FontProperties(fname=font_path).get_name()
+# rc('font', family=font)
 
 def hanguel(team):
     if team == "Atlanta Braves":
