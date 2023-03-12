@@ -3,17 +3,16 @@ import numpy as npname
 import pandas as pd
 import statsapi
 from datetime import datetime, timedelta
-from PIL import Image
 
 
 from scores import hanguel
 
-a= datetime.today()
-y = a - timedelta(days=1)
-y1 = y.strftime("%m/%d/%Y")
+to = datetime.today()
+yesterday = to - timedelta(days=1)
+yesterday = yesterday.strftime("%m/%d/%Y")
 
 today = datetime.today().strftime("%m/%d/%Y")
-scores = statsapi.schedule(start_date=today)
+scores = statsapi.schedule(start_date=yesterday)
 
 def team_img(team):
     if team == "Atlanta Braves":
@@ -103,7 +102,7 @@ def today_score(index):
         home_team2 = hanguel(scores[index]["home_name"])
         home_score = scores[index]["home_score"]
         home_pitcher = scores[index]["home_probable_pitcher"]
-        inning = scores[index]["current_inning"] + "회"
+        inning = str(scores[index]["current_inning"]) +"회"
         if inning == "회":
             inning = ""
         game_type = scores[index]["game_type"]
@@ -117,12 +116,7 @@ def today_score(index):
             status1 = "진행중"
 
         html = f"""
-            <style>
-                table, tr, td {{
-                    border: none;
-                }}
-            </style>
-            <table border = "4">
+            <table>
                 <tr>
                     <td colspan = "4">{game_type}</td>
                 </tr>
@@ -156,13 +150,6 @@ def run_home():
         today_score(10)
         today_score(12)
         today_score(14)
-        today_score(16)
-        today_score(18)
-        today_score(20)
-        today_score(22)
-        today_score(24)
-        today_score(26)
-        today_score(28)
 
     with col1:
         today_score(1)
@@ -172,14 +159,7 @@ def run_home():
         today_score(9)
         today_score(11)
         today_score(13)
-        today_score(15)
-        today_score(17)
-        today_score(19)
-        today_score(21)
-        today_score(23)
-        today_score(25)
-        today_score(27)
-        today_score(29)
+      
 
     
 
